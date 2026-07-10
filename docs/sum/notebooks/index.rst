@@ -12,30 +12,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-.. This file includes the ToC of the user manual section.
+.. This file includes the ToC of the SUM notebooks section.
 
-Software user manual / Guidelines
-=================================
+Notebooks
+=========
 
-This section contains the project's Software user manual (SUM).
-
-  NOTE The proposed SUM is using separate files for each of the sections.
-
-  Sections can be grouped together but the overall structure should
-  allow for easy navigation in the SUM.
+This section includes the notebooks provided with the
+Software user manual.
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
-   introduction
-   conventions
-   purpose
-   external-view
-   operations-environment
-   operations-basics
-   operations-manual
-   reference-manual
-   tutorials
-   notebooks/index
-   analytical-index
+   my_processor_notebook

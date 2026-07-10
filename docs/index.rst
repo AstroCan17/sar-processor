@@ -23,6 +23,7 @@ Welcome to the sar-processor documentation!
 
    CSC DPR Reference Web Site <https://eopf.copernicus.eu/>
    pipeline
+   sim
    sum/index
    API Reference <api/sar_processor>
    Terms and Abbreviations <https://eopf.copernicus.eu/eopf-user-manuals-and-guidelines-for-the-processor-developers/>
@@ -56,6 +57,7 @@ Welcome to the sar-processor documentation!
    compliance/suitp-unit-integration-test-plan
    compliance/vv-report
    compliance/suitr-unit-integration-test-report
+   suitr
    compliance/traceability-matrix
    compliance/qr-qualification-review-report
 
