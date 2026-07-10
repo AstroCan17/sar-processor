@@ -9,15 +9,16 @@
 | **Configuration item** | `gitlab.eopf.copernicus.eu/ipf/sar-processor` |
 | **Software criticality** | Category C (ECSS-Q-ST-80C Rev.2 / ECSS-E-ST-40C Annex R) |
 | **Baselined at** | SRR |
-| **Status** | Draft for SRR — skeleton |
+| **Status** | Draft for SRR |
 
 > This SDP is the top-level management artefact of the ECSS software life cycle for the
 > `sar-processor` project. It follows the ECSS-E-ST-40C Rev.1 Annex O DRD section structure
 > and records the management and development approach, the life-cycle model, the review
 > milestones, and — through the tailoring in §5.5 / §5.6 — the documentation tree the project
 > commits to. The footprint is tailored to a Category C, single-developer ground-segment
-> processor. This issue is the **repository skeleton**: structure and tailoring are committed,
-> technical scoping is completed at SRR.
+> processor. This issue **completes the SRR baseline**: the life-cycle model, tailored DRL, work
+> breakdown and the WP-5 implementation increment plan are committed; the per-milestone technical
+> documents (SRS/ICD/DPM/ATBD/SDD/…) follow at their respective gates (PDR/CDR/QR).
 
 ## <1> Introduction
 
@@ -73,15 +74,47 @@ project start to establish the SRR baseline and is maintained throughout the lif
 
 ## <3> Terms, definitions and abbreviated terms
 
-Terms per AD-1 clause 3. Project-specific terms (SLC, GRD, Doppler centroid, ISP, ADF, …) are
-collected in the SSS (RD-1) glossary. `TBD (SRR)`.
+Terms per AD-1 clause 3. The full project SAR glossary (ISP, FDBAQ, SLC, GRD, GTC, focusing, RDA,
+DCE, TOPSAR, burst, deramp, PRF/SWST, chirp/replica, σ0/β0/γ0, EAP/AAP/AAEP, NESZ, PSLR/ISLR, IRW,
+ALE, ENL, IPF, ADF, SAFE, annotation, …) is collected in the SSS (RD-1) <3> and applies here.
 
 ## <4> Software life cycle management
 
 **<4.1> Life cycle.** Incremental development within the ECSS review frame
 **SRR → PDR → CDR → QR → AR**, mirroring the msi-processor precedent: requirements baseline at SRR,
 architectural design + preliminary ICD/DPM/ATBD at PDR, detailed design + SUITP at CDR,
-verification results at QR, acceptance at AR. `TBD (SRR)`: increment plan.
+verification results at QR, acceptance at AR.
+
+**Work breakdown (WP → milestone).**
+
+| WP | Title | Milestone |
+|---|---|---|
+| WP-1 | Project setup (repo, CI, `ipf` group runner, milestones) | pre-SRR (done) |
+| WP-2 | SRR documentation (SDP, SRevP, SPAP, Risk Register, SSS, IRD, initial SRF) | SRR |
+| WP-3 | PDR documentation (SRS, V&V plan, ICD start, DPM, ATBD, preliminary SDD) | PDR |
+| WP-4 | CDR documentation (detailed SDD+DJF, SUITP, final ICD, SRF, traceability matrix) | CDR |
+| WP-5 | Implementation — SAR processing stages, decomposed into the increments below | post-CDR |
+| WP-6 | Verification & validation (SVR, SUITR), release (SRelD/SRN), SUM | QR / AR |
+
+**Implementation increment plan (WP-5, post-CDR).** WP-5 is decomposed into pedagogically-ordered
+increments — **fundamentals before TOPSAR complexity**. The v1 target is IW/TOPSAR **SLC + GRD + GTC**,
+validated against real Sentinel-1 data (tolerance-based, not bit-identical). Each increment carries a
+teaching ATBD section + a reference notebook (authored during PDR/CDR as DPM breakpoint studies) that is
+hardened — not rewritten — into `core.py`/`unit.py` after CDR.
+
+| Inc | Scope | Principal artefacts |
+|---|---|---|
+| 0 | Ground zero: L0-package extract, one real IW datatake+ADFs into the data store, typed-but-empty package skeleton, point-target simulator, driver phases | `common/`, `exceptions/`, `sensors/profile.py`, empty `computing/<stage>/`, `product/*` stubs |
+| 1 | L0 decode (FDBAQ) + product/annotation model + pre-processing | `computing/l0_decode/`, `computing/preproc/`, `product/{annotation,safe}.py` |
+| 2 | Single-burst focusing (range + azimuth RDA); point-target then real burst | `computing/range_comp/`, `computing/azimuth_comp/` |
+| 3 | Doppler-centroid estimation + TOPSAR deramp/UFR | `computing/doppler/`, `computing/topsar/` |
+| 4 | Multi-burst deburst/merge → full IW SLC | `computing/topsar/` merge |
+| 5 | Radiometric calibration (σ0/β0/γ0 + EAP) + thermal-noise | `computing/calibration/`, `computing/noise/` |
+| 6 | GRD (detection / multilook / ground-range) | `computing/grd/` |
+| 7 | GTC geocoding (Range-Doppler terrain correction + DEM) | `computing/geocode/` |
+| 8 | Full-chain integration + calibration mode + QR hardening | `tests/it/`, `CALIBRATION_PHASES` |
+
+Detailed activities are managed as GitLab issues assigned to the corresponding milestone.
 
 **<4.2> Organisation.** Single developer (project owner) acting as designer, implementer and
 verifier; reviews conducted asynchronously on the GitLab instance via MRs and milestone review
@@ -96,8 +129,13 @@ project runners, Python 3.11, EOPF CPM pinned (`eopf == 2.8.1`).
 
 **<5.1>–<5.4>** Development standards (PEP8 via black/flake8/isort at 120 columns, mypy strict on
 the package, bandit security scanning), methods and tools follow the msi-processor conventions;
-they are enforced by the CI pipeline (`.gitlab-ci.yml`). `TBD (SRR)`: any SAR-specific numerical
-toolchain additions (FFT backends) with SDD justification.
+they are enforced by the CI pipeline (`.gitlab-ci.yml`). The **SAR-specific numerical addition** over
+the msi toolchain is a fast-FFT backend for range/azimuth compression — `numpy.fft` as the deterministic
+baseline, with `scipy.fft` / `pyFFTW` as an optional accelerated backend — declared in `pyproject.toml`
+and justified in the SDD/SRF. The chosen FFT backend and the complex working dtype (`complex64`) are
+fixed for reproducible CI budgets (SSS SYS-RAM-01); the design method (pure `core.py` + thin `unit.py`
+`EOProcessingUnit` + CPM computing-model JSON, sensor-profile-driven) and the single mode-only pipeline
+driver follow the msi-processor pattern.
 
 ### <5.5> Documentation plan
 
@@ -143,16 +181,31 @@ published through the Sphinx site (`docs/compliance/` symlinks). One document = 
 
 Category C, single-developer, ground-segment-only: documents merged or lightened exactly as in the
 msi-processor precedent (V&V plans merged per Annex I/J; SMP tailored out in favour of the GitLab
-issue tracker + SemVer releases; DJF kept light). Clause-by-clause rationale `TBD (SRR)`.
+issue tracker + SemVer releases; DJF kept light).
+
+**Clause-5 tailoring summary (ECSS-E-ST-40C, Category C / Annex R).** Requirements, interface, design,
+verification and validation clauses are applied in full (SSS/IRD → SRS/ICD → SDD → vv-plan → SVR).
+Formal system-specification-language models (E-40 §5.2.7 / SSS <7>) are tailored out — concrete project
+artefacts (the `EOProcessingUnit` pipeline graph, the profile schema, the EOProduct/Zarr data model, the
+DPM/ATBD) serve the model role. Independent IV&V and separate PA/verification roles are replaced by
+**automated CI gates + review checklists** (Category C, single developer). TAILORED-OUT with rationale:
+SMP (light — GitLab issues + SemVer); SPAMR (subsumed by the SVR + milestone reviews); SVS (realised by
+the test suite + vv-plan). Reuse is only of the **sensor-agnostic scaffold/process** from msi-processor:
+the `product/` subpackage and the SAR-specific data types (`complex64`, per-burst grouping) and stage
+set are **new development** recorded in the SRF (RD-12) — no structural identity with msi-processor is
+levied.
 
 ## <6> Schedule and milestones
 
 | Milestone | Scope | Target |
 |---|---|---|
-| SRR | Requirements baseline (SSS, IRD, SDP, SPAP, SRevP, Risk Register, initial SRF) | TBD |
-| PDR | SRS, preliminary ICD, DPM, ATBD, V&V Plan | TBD |
-| CDR | SDD, final ICD, DJF, SUITP | TBD |
-| QR | SVR, SUITR, SRN, CIDL, SCF, QR report, SUM | TBD |
-| AR | Acceptance, delivery baseline | TBD |
+| SRR | Requirements baseline (SSS, IRD, SDP, SPAP, SRevP, Risk Register, initial SRF) | GitLab milestone |
+| PDR | SRS, preliminary ICD, DPM, ATBD, V&V Plan | GitLab milestone |
+| CDR | SDD, final ICD, DJF, SUITP, SRF, traceability matrix | GitLab milestone |
+| QR | SVR, SUITR, SRN, CIDL, SCF, QR report, SUM | GitLab milestone |
+| AR | Acceptance, delivery baseline | GitLab milestone |
+
+Calendar dates are managed in the GitLab group `ipf` milestones, not duplicated here. The milestone
+order is fixed **SRR → PDR → CDR → QR → AR**; implementation (WP-5, §4.1) starts only after CDR closure.
 
 *End of SDP. Authored per ECSS-E-ST-40C Rev.1 Annex O.*
