@@ -13,6 +13,5 @@
 # limitations under the License.
 
 """
-This folder contains the unit tests of the data processor.
-They consider the components under test as a white box.
+This module is an integration test module for your processing units and processors.
 """

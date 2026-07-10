@@ -14,7 +14,23 @@
   limitations under the License.
 -->
 
-# Introduction
+# Software installation manual
 
-This file contains the introduction section
-of the project's Software user manual.
+This section contains the project's Software installation manual (SIM).
+
+```{note}
+This section shall provide the information required to install the
+software.
+```
+
+## Introduction
+
+## Prerequisites
+
+## Hardware configuration
+
+## Software configuration
+
+## Build instructions
+
+## Install instructions

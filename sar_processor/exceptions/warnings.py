@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-This folder contains the unit tests of the data processor.
-They consider the components under test as a white box.
-"""
+
+class MyWarning(Warning):
+    """Raised when an alert should be displayed."""
