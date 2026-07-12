@@ -140,6 +140,11 @@ nb_custom_formats = {
     ".md": ["jupytext.reads", {"fmt": "mystnb"}],
 }
 
+# Pre-SRR skeleton: the placeholder tutorial notebook is not runnable against the
+# stub API yet, so render it from stored sources instead of executing at build time.
+# Re-enable ("auto") once the notebook exercises the real sar_processor API.
+nb_execution_mode = "off"
+
 # Sphinx apidoc
 autodoc_typehints = "signature"
 
