@@ -74,7 +74,7 @@ templates_path = ["_templates"]
 # a list of builtin themes.
 html_theme = "sphinx_book_theme"
 html_theme_options = {
-    "repository_url": "https://gitlab.eopf.copernicus.eu/ipf/sar-processor",
+    "repository_url": "https://github.com/AstroCan17/sar-processor",
     "repository_branch": "main",
     "use_edit_page_button": True,
     # The 'open issue' button is not yet supported for GitLab
@@ -139,6 +139,11 @@ nitpick_ignore = [
 nb_custom_formats = {
     ".md": ["jupytext.reads", {"fmt": "mystnb"}],
 }
+
+# Pre-SRR skeleton: the placeholder tutorial notebook is not runnable against the
+# stub API yet, so render it from stored sources instead of executing at build time.
+# Re-enable ("auto") once the notebook exercises the real sar_processor API.
+nb_execution_mode = "off"
 
 # Sphinx apidoc
 autodoc_typehints = "signature"

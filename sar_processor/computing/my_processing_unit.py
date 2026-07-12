@@ -55,9 +55,10 @@ class MyProcessingUnit(EOProcessingUnit):
         --------
         Usage examples can be added as Jupyter notebook cells.
 
-        .. jupyter-execute::
+        .. code-block:: python
 
           # All required imports
+          from eopf.computing.abstract import DataType
           from eopf.product import EOProduct
           from sar_processor.computing.my_processing_unit import MyProcessingUnit
 

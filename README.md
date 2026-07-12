@@ -9,7 +9,7 @@ with **Sentinel-1 C-SAR** as the public reference dataset.
 Built on the ESA **EOPF Core Python Modules** (CPM, `eopf == 2.8.1`): each
 processing stage is an `EOProcessingUnit`, products are EOPF `EOProduct`
 objects, outputs are cloud-native **Zarr**. Sibling project of
-[`ipf/msi-processor`](https://gitlab.eopf.copernicus.eu/ipf/msi-processor),
+[`ipf/msi-processor`](https://github.com/AstroCan17/msi-processor),
 whose platform machinery (CI, documentation toolchain, package layout, single
 pipeline driver) it reuses (see the SRF).
 
