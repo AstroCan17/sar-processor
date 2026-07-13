@@ -17,17 +17,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Skip when DATA_REPO_PAT is missing
-        if: ${{ secrets.DATA_REPO_PAT == '' }}
-        run: echo "DATA_REPO_PAT not configured; skipping fetch smoke test."
       - name: Fetch SAR dataset
-        if: ${{ secrets.DATA_REPO_PAT != '' }}
         env:
           DATA_REPO_PAT: ${{ secrets.DATA_REPO_PAT }}
           DATA_REPO_NAME: ipf-data
           DATASET_TAG: datasets-sar-v1
           DATA_DIR: data
-        run: bash .devcontainer/scripts/fetch-input-data.sh
-      - name: Verify dataset tag
-        if: ${{ secrets.DATA_REPO_PAT != '' }}
-        run: test -f data/.dataset_tag
+        run: |
+          if [ -z "${DATA_REPO_PAT}" ]; then
+            echo "DATA_REPO_PAT not configured; skipping fetch smoke test."
+            exit 0
+          fi
+          bash .devcontainer/scripts/fetch-input-data.sh
+          test -f data/.dataset_tag
