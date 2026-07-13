@@ -19,9 +19,7 @@ from eopf.computing.abstract import ADF, EOProcessingUnit
 from eopf.product import EOContainer, EOGroup, EOProduct
 from xarray import DataTree
 
-InputValue = (
-    EOProduct | EOContainer | DataTree | Iterable[EOProduct | EOContainer | DataTree]
-)
+InputValue = EOProduct | EOContainer | DataTree | Iterable[EOProduct | EOContainer | DataTree]
 
 
 class MyProcessingUnit(EOProcessingUnit):
