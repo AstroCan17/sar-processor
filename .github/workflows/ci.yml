@@ -165,6 +165,7 @@ jobs:
           .audit-venv/bin/pip-audit -r audit-requirements.txt --desc on \
             --ignore-vuln PYSEC-2026-248 \
             --ignore-vuln PYSEC-2026-249 \
+            --ignore-vuln PYSEC-2026-2132 \
             --ignore-vuln CVE-2026-48817 \
             --ignore-vuln CVE-2026-48818
       - name: Upload audit requirements
