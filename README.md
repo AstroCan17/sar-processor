@@ -36,6 +36,14 @@ python scripts/run_pipeline.py <store> --mode nominal
 
 Deployment settings come from environment variables defined in the ICD (PDR).
 
+## Codespaces + private dataset setup
+
+- `AstroCan17/sar-processor` (public): code
+- `AstroCan17/ipf-data` (private): SAR release tag `datasets-sar-v1`
+
+Set Codespaces secret `DATA_REPO_PAT` (read access to `ipf-data`). The devcontainer
+fetches `input-data.tar.gz` into `data/`. Refresh with `make data-sync`.
+
 ## Development
 
 ```shell

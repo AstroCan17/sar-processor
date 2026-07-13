@@ -1,0 +1,8 @@
+{
+  "name": "sar-processor",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.11-bullseye",
+  "containerEnv": {
+    "DATASET_TAG": "datasets-sar-v1"
+  },
+  "postCreateCommand": "bash .devcontainer/scripts/setup.sh"
+}
