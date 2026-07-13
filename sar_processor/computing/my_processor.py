@@ -13,14 +13,13 @@
 # limitations under the License.
 
 import warnings
-from typing import Any, Optional
+from collections.abc import Mapping
+from typing import Any
 
-from eopf.computing.abstract import ADF, DataType, EOProcessingUnit
+from eopf.computing.abstract import ADF, EOProcessingUnit
 from eopf.logging import EOLogging
 
-# You might have to reformat the imports depending on the
-# length of the package name that is given when generating your project.
-from sar_processor.computing.my_processing_unit import MyProcessingUnit
+from sar_processor.computing.my_processing_unit import InputValue, MyProcessingUnit
 from sar_processor.exceptions.errors import MyError
 from sar_processor.exceptions.warnings import MyWarning
 
@@ -36,10 +35,11 @@ class MyProcessor(EOProcessingUnit):
 
     def run(
         self,
-        inputs: dict[str, DataType],
-        adfs: Optional[dict[str, ADF]] = None,
+        inputs: Mapping[str, InputValue],
+        adfs: Mapping[str, ADF] | None = None,
+        mode: str | None = None,
         **kwargs: Any,
-    ) -> dict[str, DataType]:
+    ) -> Mapping[str, InputValue]:
         """Runs the processor.
 
         Parameters

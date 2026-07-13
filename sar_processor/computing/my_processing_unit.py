@@ -12,10 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Optional
+from collections.abc import Iterable, Mapping
+from typing import Any
 
-from eopf.computing.abstract import ADF, DataType, EOProcessingUnit
-from eopf.product import EOGroup, EOProduct
+from eopf.computing.abstract import ADF, EOProcessingUnit
+from eopf.product import EOContainer, EOGroup, EOProduct
+from xarray import DataTree
+
+InputValue = EOProduct | EOContainer | DataTree | Iterable[EOProduct | EOContainer | DataTree]
 
 
 class MyProcessingUnit(EOProcessingUnit):
@@ -30,10 +34,11 @@ class MyProcessingUnit(EOProcessingUnit):
 
     def run(
         self,
-        inputs: dict[str, DataType],
-        adfs: Optional[dict[str, ADF]] = None,
+        inputs: Mapping[str, InputValue],
+        adfs: Mapping[str, ADF] | None = None,
+        mode: str | None = None,
         **kwargs: Any,
-    ) -> dict[str, DataType]:
+    ) -> Mapping[str, InputValue]:
         """Runs the processing unit
 
         A more complete description can be added here.
@@ -76,7 +81,7 @@ class MyProcessingUnit(EOProcessingUnit):
         # for more information
         output_product = EOProduct(kwargs["name"])
         output_product["measurements"] = EOGroup()
-        output_dict: dict[str, DataType] = {"output": output_product}
+        output_dict: dict[str, InputValue] = {"output": output_product}
 
         # Add mandatory groups to this empty product
         # Create a top level common structure by adding
@@ -87,6 +92,8 @@ class MyProcessingUnit(EOProcessingUnit):
         for product_key in inputs:
             print("Input product key:", product_key)
             input_product = inputs[product_key]
+            if not isinstance(input_product, EOProduct):
+                continue
             print("Input product:", input_product.name, input_product)
             subgroup = EOGroup(product_key)
             output_product.measurements[input_product.name] = subgroup
