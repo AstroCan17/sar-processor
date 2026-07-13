@@ -12,11 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from typing import Any
 
-from eopf.computing.abstract import ADF, DataType, EOProcessingUnit
-from eopf.product import EOGroup, EOProduct
+from eopf.computing.abstract import ADF, EOProcessingUnit
+from eopf.product import EOContainer, EOGroup, EOProduct
+from xarray import DataTree
+
+InputValue = (
+    EOProduct | EOContainer | DataTree | Iterable[EOProduct | EOContainer | DataTree]
+)
 
 
 class MyProcessingUnit(EOProcessingUnit):
@@ -31,11 +36,11 @@ class MyProcessingUnit(EOProcessingUnit):
 
     def run(
         self,
-        inputs: Mapping[str, DataType],
+        inputs: Mapping[str, InputValue],
         adfs: Mapping[str, ADF] | None = None,
         mode: str | None = None,
         **kwargs: Any,
-    ) -> Mapping[str, DataType]:
+    ) -> Mapping[str, InputValue]:
         """Runs the processing unit
 
         A more complete description can be added here.
@@ -78,7 +83,7 @@ class MyProcessingUnit(EOProcessingUnit):
         # for more information
         output_product = EOProduct(kwargs["name"])
         output_product["measurements"] = EOGroup()
-        output_dict: dict[str, DataType] = {"output": output_product}
+        output_dict: dict[str, InputValue] = {"output": output_product}
 
         # Add mandatory groups to this empty product
         # Create a top level common structure by adding
